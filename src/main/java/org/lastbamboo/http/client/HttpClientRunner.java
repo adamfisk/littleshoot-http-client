@@ -1,6 +1,5 @@
 package org.lastbamboo.http.client;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
@@ -360,7 +359,7 @@ public final class HttpClientRunner implements Runnable
         {
         LOG.trace("Received "+this.m_httpMethod.getStatusCode() + 
             " for request: " +  this.m_httpMethod.getPath());
-
+        
         final Header length = m_httpMethod.getResponseHeader ("Content-Length");
 
         if (length != null)
