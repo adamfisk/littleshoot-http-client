@@ -1,4 +1,4 @@
-package org.lastbamboo.http.client;
+package org.lastbamboo.common.http.client;
 
 import java.io.IOException;
 import java.io.InputStream;

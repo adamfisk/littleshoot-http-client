@@ -1,4 +1,4 @@
-package org.lastbamboo.http.client;
+package org.lastbamboo.common.http.client;
 
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;

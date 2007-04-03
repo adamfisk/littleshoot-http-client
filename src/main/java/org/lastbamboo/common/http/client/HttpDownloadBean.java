@@ -1,11 +1,11 @@
-package org.lastbamboo.http.client;
+package org.lastbamboo.common.http.client;
 
 import java.io.File;
 
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpConnection;
 import org.apache.commons.id.uuid.UUID;
-import org.lastbamboo.http.client.HttpClientManager;
+import org.lastbamboo.common.http.client.HttpClientManager;
 
 
 /**
