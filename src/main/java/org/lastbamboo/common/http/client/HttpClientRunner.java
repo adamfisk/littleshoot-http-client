@@ -19,7 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.LongRange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.lastbamboo.util.InputStreamHandler;
+import org.lastbamboo.common.util.InputStreamHandler;
 import org.springframework.context.ApplicationContext;
 
 /**

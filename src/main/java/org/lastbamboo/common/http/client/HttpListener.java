@@ -2,7 +2,7 @@ package org.lastbamboo.common.http.client;
 
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.lang.math.LongRange;
-import org.lastbamboo.util.WriteListener;
+import org.lastbamboo.common.util.WriteListener;
 
 /**
  * Interface for listening to download events, such as setting of the 

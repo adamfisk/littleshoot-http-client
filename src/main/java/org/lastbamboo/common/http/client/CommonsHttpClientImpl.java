@@ -7,8 +7,8 @@ import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
-import org.lastbamboo.util.RuntimeHttpException;
-import org.lastbamboo.util.RuntimeIoException;
+import org.lastbamboo.common.util.RuntimeHttpException;
+import org.lastbamboo.common.util.RuntimeIoException;
 
 /**
  * An implementation of the Apache Commons HTTP client interface.
