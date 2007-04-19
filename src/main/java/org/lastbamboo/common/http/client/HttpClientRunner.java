@@ -243,8 +243,6 @@ public final class HttpClientRunner implements Runnable
             LOG.trace("Released connection...");
             }
         }
-    
-    private static Random random = new Random();
 
     /**
      * Executes the HTTP request for the download.
@@ -268,27 +266,11 @@ public final class HttpClientRunner implements Runnable
         final int statusCode = m_httpMethod.getStatusCode ();
         if (statusCode == HttpStatus.SC_OK)
             {
-//            if(random.nextDouble() < 0.8)
-//                {
-                onTwoHundredResponse();
-//                }
-//            else
-//                {
-//                LOG.debug("Faking no 200 OK");
-//                noTwoHundredOk();
-//                }
+            onTwoHundredResponse();
             }
         else if (statusCode == HttpStatus.SC_PARTIAL_CONTENT)
             {
-//            if(random.nextDouble() < 0.8)
-//                {
-                onPartialContent();
-//                }
-//            else
-//                {
-//                LOG.debug("Faking no 200 OK");
-//                noTwoHundredOk();
-//                }
+            onPartialContent();
             }
         else
             {
