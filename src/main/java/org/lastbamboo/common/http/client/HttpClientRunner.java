@@ -3,7 +3,6 @@ package org.lastbamboo.common.http.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
-import java.util.Random;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
@@ -13,6 +12,7 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.lang.StringUtils;
@@ -286,8 +286,15 @@ public final class HttpClientRunner implements Runnable
      */
     private void noTwoHundredOk ()
         {
-        LOG.warn("Did not receive 200 OK response for request: " +
-            this.m_httpMethod.getPath());
+        try
+            {
+            LOG.warn("Did not receive 200 OK response for request: " +
+                this.m_httpMethod.getURI());
+            }
+        catch (final URIException e)
+            {
+            LOG.error("Could not resolve URI", e);
+            }
         if (m_applicationContext != null)
             {
             final String status =
