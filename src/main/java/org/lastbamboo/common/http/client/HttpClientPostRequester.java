@@ -23,7 +23,7 @@ public class HttpClientPostRequester implements HttpClientRequester
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final HttpClient m_httpClient = new HttpClient();
     
-    public void request(final String address,
+    public int request(final String address,
         final Collection<Pair<String, String>> parameters)
         {
         final StringBuilder sb = new StringBuilder ();
@@ -42,13 +42,12 @@ public class HttpClientPostRequester implements HttpClientRequester
                 {
                 LOG.warn("ERROR ISSUING POST REQUEST!!" + 
                     statusLine + "\n" + method.getResponseBodyAsString());
-                throw new RuntimeHttpException(
-                    "Did not receive OK.  Code: "+statusCode);
                 }
             else
                 {
                 LOG.debug("Successfully wrote request...");
                 }
+            return statusCode;
             }
         catch (final HttpException e)
             {

@@ -15,6 +15,7 @@ public interface HttpClientRequester
      * 
      * @param baseUrl The base URL to send the request to.
      * @param parameters The request parameters.
+     * @return The HTTP status code.
      */
-    void request(String baseUrl, Collection<Pair<String,String>> parameters);
+    int request(String baseUrl, Collection<Pair<String,String>> parameters);
     }
