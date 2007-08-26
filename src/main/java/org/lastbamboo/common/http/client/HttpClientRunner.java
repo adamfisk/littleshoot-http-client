@@ -20,6 +20,7 @@ import org.apache.commons.lang.math.LongRange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.lastbamboo.common.util.InputStreamHandler;
+import org.lastbamboo.common.util.RuntimeIoException;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -172,6 +173,10 @@ public final class HttpClientRunner implements Runnable
         try
             {
             handleDownload();
+            }
+        catch (final RuntimeIoException e)
+            {
+            LOG.debug("Could not connect to host?", e);
             }
         catch (final Throwable t)
             {
