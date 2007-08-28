@@ -295,8 +295,11 @@ public final class HttpClientRunner implements Runnable
             {
             LOG.warn("Did not receive 200 OK response for request to URI: " +
                 this.m_httpMethod.getURI() + "\nInstead received: "+
-                this.m_httpMethod.getStatusLine()+"\nRequest headers:\n"+
-                headerString(this.m_httpMethod));
+                this.m_httpMethod.getStatusLine()+
+                "\nRequest headers:\n"+
+                headerString(this.m_httpMethod.getRequestHeaders())+
+                "\nResponse headers:\n"+
+                headerString(this.m_httpMethod.getResponseHeaders()));
             }
         catch (final URIException e)
             {
@@ -313,10 +316,9 @@ public final class HttpClientRunner implements Runnable
         m_listener.onNoTwoHundredOk (m_httpMethod.getStatusCode ());
         }
 
-    private static String headerString(final HttpMethod method)
+    private static String headerString(final Header[] headers)
         {
         final StringBuilder sb = new StringBuilder();
-        final Header[] headers = method.getRequestHeaders();
         for (int i = 0; i < headers.length; i++)
             {
             sb.append(headers[i].getName());
