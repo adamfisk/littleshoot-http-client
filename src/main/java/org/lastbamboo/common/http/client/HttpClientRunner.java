@@ -322,7 +322,6 @@ public final class HttpClientRunner implements Runnable
             sb.append(headers[i].getName());
             sb.append(": ");
             sb.append(headers[i].getValue());
-            sb.append("\r\f");
             }
         return sb.toString();
         }
