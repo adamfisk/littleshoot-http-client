@@ -293,8 +293,9 @@ public final class HttpClientRunner implements Runnable
         {
         try
             {
-            LOG.warn("Did not receive 200 OK response for request: " +
-                this.m_httpMethod.getURI());
+            LOG.warn("Did not receive 200 OK response for request to URI: " +
+                this.m_httpMethod.getURI() + "\nInstead received: "+
+                this.m_httpMethod.getStatusLine());
             }
         catch (final URIException e)
             {
