@@ -7,7 +7,7 @@ import org.lastbamboo.common.util.Pair;
 /**
  * Issues a post request using HTTP client. 
  */
-public class HttpClientPostRequester implements HttpClientRequester
+public class HttpClientGetRequester implements HttpClientRequester
     {
 
     public int request(final String address,
@@ -15,7 +15,7 @@ public class HttpClientPostRequester implements HttpClientRequester
         {
         final BaseHttpClientRequester baseRequester = 
             new BaseHttpClientRequester(address, parameters);
-        return baseRequester.post();
+        return baseRequester.get();
         }
 
     }
