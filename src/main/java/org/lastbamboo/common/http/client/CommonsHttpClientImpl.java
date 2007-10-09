@@ -56,12 +56,12 @@ public final class CommonsHttpClientImpl implements CommonsHttpClient
     /**
      * {@inheritDoc}
      */
-    public void executeMethod
+    public int executeMethod
             (final HttpMethod method)
         {
         try
             {
-            m_commonsClient.executeMethod(method);
+            return m_commonsClient.executeMethod(method);
             }
         catch(final HttpException e)
             {

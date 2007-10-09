@@ -176,7 +176,7 @@ public final class HttpClientRunner implements Runnable
             }
         catch (final RuntimeIoException e)
             {
-            LOG.debug("Could not connect to host?", e);
+            LOG.debug("Could not connect to host or connection lost?", e);
             }
         catch (final Throwable t)
             {
@@ -240,6 +240,11 @@ public final class HttpClientRunner implements Runnable
             executeHttpRequest ();
             LOG.trace ("Finished executing HTTP request...");
             }
+        catch (final RuntimeException e)
+            {
+            LOG.debug("Caught exception on request", e);
+            throw e;
+            }
         finally
             {
             // Release the connection if no other methods need it.
@@ -257,7 +262,7 @@ public final class HttpClientRunner implements Runnable
     private void executeHttpRequest () throws IOException
         {
         LOG.trace ("Sending HTTP GET request for: " + 
-            this.m_httpMethod.getPath());
+            this.m_httpMethod.getQueryString());
         
         final long start = System.currentTimeMillis();
         m_httpClient.executeMethod (m_httpMethod);

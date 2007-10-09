@@ -12,7 +12,8 @@ public interface LbHttpClient
      * 
      * @param method
      *      The method to execute.
+     * @return The response code.
      */
-    void executeMethod
+    int executeMethod
             (HttpMethod method);
     }
