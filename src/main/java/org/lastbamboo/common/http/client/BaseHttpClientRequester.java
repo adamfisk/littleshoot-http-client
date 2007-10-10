@@ -57,7 +57,7 @@ public class BaseHttpClientRequester
             final StatusLine statusLine = method.getStatusLine();
             if (statusCode != HttpStatus.SC_OK)
                 {
-                LOG.warn("ERROR ISSUING POST REQUEST!!" + 
+                LOG.warn("ERROR ISSUING REQUEST!!" + 
                     statusLine + "\n" + method.getResponseBodyAsString());
                 }
             else
