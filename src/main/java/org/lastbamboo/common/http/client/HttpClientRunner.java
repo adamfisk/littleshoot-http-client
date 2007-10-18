@@ -2,26 +2,19 @@ package org.lastbamboo.common.http.client;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.LongRange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.lastbamboo.common.util.InputStreamHandler;
 import org.lastbamboo.common.util.RuntimeIoException;
-import org.springframework.context.ApplicationContext;
 
 /**
  * Performs an HTTP download using HttpClient.
@@ -41,64 +34,11 @@ public final class HttpClientRunner implements Runnable
      */
     private final HttpListener m_listener;
 
-    /**
-     * The application context for retrieving localized messages.
-     */
-    private ApplicationContext m_applicationContext;
-
     private final CommonsHttpClient m_httpClient;
 
     private final HttpMethod m_httpMethod;
 
     /**
-     * Creates a new downloader for the specified resource.
-     *
-     * @param protocol The protocol to use for establishing the socket to
-     * write HTTP messages over.
-     * @param id The network ID of the host to download from.
-     * @param handler The handler for processing the input stream from the
-     * remote host.
-     * @param contextPath The context path for the resource.  This could
-     * be, for example, "uri-res/N2R?" or "rss/".
-     * @param resource The SHA1 <code>URI</code> resource.
-     * @param listener The listener for download events.
-     * @param ac The context for looking up localized resources.
-     */
-    public HttpClientRunner (final String protocol, final long id,
-        final InputStreamHandler handler, final String contextPath,
-        final String resource, final HttpListener listener,
-        final ApplicationContext ac)
-        {
-        if (StringUtils.isBlank(contextPath))
-            {
-            throw new IllegalArgumentException("blank context path: "+
-                contextPath);
-            }
-        if (StringUtils.isBlank(resource))
-            {
-            throw new IllegalArgumentException("blank resource"+resource);
-            }
-        if (ac == null)
-            {
-            throw new NullPointerException("null context");
-            }
-        this.m_inputStreamHandler = handler;
-        this.m_listener = listener;
-        this.m_applicationContext = ac;
-        this.m_httpClient = new CommonsHttpClientImpl();
-        
-        // Override the default of attempting to connect 3 times.
-        final HttpMethodRetryHandler retryHandler = 
-            new DefaultHttpMethodRetryHandler(0, false);
-        this.m_httpClient.getParams().setParameter(
-            HttpMethodParams.RETRY_HANDLER, retryHandler);
-        this.m_httpClient.getHttpConnectionManager().getParams().
-            setConnectionTimeout(300*1000);
-        this.m_httpMethod =
-            new GetMethod(protocol+"://"+id+"/"+contextPath+resource);
-        }
-
-    /**
      * Creates a new HTTP client <code>Runnable</code> with the specified
      * collaborating classes.
      *
@@ -109,60 +49,15 @@ public final class HttpClientRunner implements Runnable
      * @param method The HTTP method handler for the request.  This could be,
      * "GET" or "HEAD", for example.
      * @param listener The listener for HTTP events during the download.
-     */
-    public HttpClientRunner(final InputStreamHandler handler,
-        final HttpClient client, final HttpMethod method,
-        final HttpListener listener)
-        {
-        this(handler, client, method, listener, null);
-        }
-    
-    public HttpClientRunner
-            (final InputStreamHandler handler,
-             final HttpClient client,
-             final HttpMethod method,
-             final HttpListener listener,
-             final ApplicationContext ac)
-        {
-        this(handler,
-             new CommonsHttpClientImpl(client),
-             method,
-             listener,
-             ac);
-        }
-    
-    public HttpClientRunner
-            (final InputStreamHandler handler,
-             final CommonsHttpClient client,
-             final HttpMethod method,
-             final HttpListener listener)
-        {
-        this(handler, client, method, listener, null);
-        }
-    
-    /**
-     * Creates a new HTTP client <code>Runnable</code> with the specified
-     * collaborating classes.
-     *
-     * @param handler The class that should receive the <code>InputStream</code>
-     * for the HTTP message body.
-     * @param client The <code>HttpClient</code> instance that will send the
-     * HTTP request.
-     * @param method The HTTP method handler for the request.  This could be,
-     * "GET" or "HEAD", for example.
-     * @param listener The listener for HTTP events during the download.
-     * @param ac The <code>ApplicationContext</code> instance for looking up
-     * any necessary data.
      */
     public HttpClientRunner(final InputStreamHandler handler,
         final CommonsHttpClient client, final HttpMethod method,
-        final HttpListener listener, final ApplicationContext ac)
+        final HttpListener listener)
         {
         this.m_inputStreamHandler = handler;
         this.m_httpClient = client;
         this.m_httpMethod = method;
         this.m_listener = listener;
-        this.m_applicationContext = ac;
         }
 
     /**
@@ -310,14 +205,7 @@ public final class HttpClientRunner implements Runnable
             {
             LOG.error("Could not resolve URI", e);
             }
-        if (m_applicationContext != null)
-            {
-            final String status =
-                m_applicationContext.getMessage("download.response.code." +
-                    m_httpMethod.getStatusCode (), null, Locale.getDefault ());
-            m_listener.onStatusEvent (status);
-            }
-        
+
         m_listener.onNoTwoHundredOk (m_httpMethod.getStatusCode ());
         }
 
