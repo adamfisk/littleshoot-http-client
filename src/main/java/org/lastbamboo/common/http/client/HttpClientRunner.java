@@ -9,6 +9,8 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.LongRange;
 import org.apache.commons.logging.Log;
@@ -144,7 +146,6 @@ public final class HttpClientRunner implements Runnable
             {
             // Release the connection if no other methods need it.
             m_httpMethod.releaseConnection();
-
             LOG.trace("Released connection...");
             }
         }
@@ -179,20 +180,23 @@ public final class HttpClientRunner implements Runnable
             }
         else
             {
-            // TODO: We should still read the response body here!!
-            noTwoHundredOk();
+            onNonTwoHundredLevelResponse();
             }
-
         }
 
     /**
-     * The method called when no OK response is received when making the HTTP
-     * request.
+     * Handles the case where we receive a non-200 level response.
+     * 
+     * @throws IOException If we can't read the response stream.
      */
-    private void noTwoHundredOk ()
+    private void onNonTwoHundredLevelResponse () throws IOException
         {
+        final InputStream inputStream = m_httpMethod.getResponseBodyAsStream ();
         try
             {
+            // Just send it into the ether.  We just need to make sure we still 
+            // read the body here.
+            IOUtils.copy(inputStream, new NullOutputStream());
             LOG.warn("Did not receive 200 OK response for request to URI: " +
                 this.m_httpMethod.getURI() + "\nInstead received: "+
                 this.m_httpMethod.getStatusLine()+
@@ -204,6 +208,10 @@ public final class HttpClientRunner implements Runnable
         catch (final URIException e)
             {
             LOG.error("Could not resolve URI", e);
+            }
+        finally
+            {
+            IOUtils.closeQuietly(inputStream);
             }
 
         m_listener.onNoTwoHundredOk (m_httpMethod.getStatusCode ());
@@ -273,19 +281,15 @@ public final class HttpClientRunner implements Runnable
                 Long.parseLong (length.getValue ()));
             }
         
-//        final byte[] body = m_httpMethod.getResponseBody();
-
-        final InputStream inputStream = m_httpMethod.getResponseBodyAsStream ();
-//        final InputStream inputStream = new ByteArrayInputStream(body);
-
-//        LOG.trace("body size: " + body.length);
-        LOG.trace("inputStream class: " + inputStream.getClass());
-        LOG.trace("Got input stream...");
-        LOG.trace("Sending to handler: " + m_inputStreamHandler);
-        
         // Uncompress the data if it's gzipped, otherwise just process it.
         final Header contentEncoding =
             m_httpMethod.getResponseHeader("Content-Encoding");
+
+        // Note:  We don't close this input stream in a finally block because 
+        // it's ultimately the input stream of the socket, and we likely want
+        // to re-use it.  We just let HttpClient take care of connection
+        // management.
+        final InputStream inputStream = m_httpMethod.getResponseBodyAsStream ();
 
         if (contentEncoding == null)
             {
