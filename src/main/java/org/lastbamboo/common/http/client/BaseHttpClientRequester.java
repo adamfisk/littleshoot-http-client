@@ -58,7 +58,7 @@ public class BaseHttpClientRequester
             if (statusCode != HttpStatus.SC_OK)
                 {
                 // Note this still reads the whole response body.
-                LOG.warn("ERROR ISSUING REQUEST!!" + 
+                LOG.warn("ERROR ISSUING REQUEST: " + this.m_url + "\n" +
                     statusLine + "\n" + method.getResponseBodyAsString());
                 }
             else
