@@ -1,6 +1,7 @@
 package org.lastbamboo.common.http.client;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -10,6 +11,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.io.IOUtils;
 import org.lastbamboo.common.util.Pair;
 import org.lastbamboo.common.util.RuntimeIoException;
 import org.lastbamboo.common.util.UriUtils;
@@ -33,39 +35,47 @@ public class BaseHttpClientRequester
         sb.append (baseAddress);
         sb.append (UriUtils.getUrlParameters (parameters));
         this.m_url = sb.toString ();
+        LOG.debug("Using URL string: "+this.m_url);
         }
     
 
-    public int post()
+    public String post()
         {
         final PostMethod method = new PostMethod(this.m_url);
         return request(method);
         }
     
-    public int get()
+    public String get()
         {
         final GetMethod method = new GetMethod(this.m_url);
         return request(method);
         }
 
-    private int request(final HttpMethod method)
+    private String request(final HttpMethod method)
         {
         try
             {
             this.m_httpClient.executeMethod(method);
             final int statusCode = method.getStatusCode();
             final StatusLine statusLine = method.getStatusLine();
+            final InputStream is = method.getResponseBodyAsStream();
+            final String body = IOUtils.toString(is);
+            
             if (statusCode != HttpStatus.SC_OK)
                 {
                 // Note this still reads the whole response body.
                 LOG.warn("ERROR ISSUING REQUEST: " + this.m_url + "\n" +
-                    statusLine + "\n" + method.getResponseBodyAsString());
+                    statusLine + "\n" + body);
                 }
             else
                 {
                 LOG.debug("Successfully wrote request...");
+                
+                // We always have to read the body.
+                //IOUtils.copy(is, new NullOutputStream());
                 }
-            return statusCode;
+            
+            return body;
             }
         catch (final HttpException e)
             {

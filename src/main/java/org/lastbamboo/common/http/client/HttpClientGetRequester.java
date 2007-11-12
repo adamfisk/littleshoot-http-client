@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import org.apache.commons.httpclient.HttpMethod;
 import org.lastbamboo.common.util.Pair;
 
 /**
@@ -17,7 +16,7 @@ public class HttpClientGetRequester implements HttpClientRequester
     private static final Collection<Pair<String, String>> EMPTY_PARAMS =
         Collections.unmodifiableList(new LinkedList<Pair<String,String>>());
     
-    public int request(final String address,
+    public String request(final String address,
         final Collection<Pair<String, String>> parameters)
         {
         final BaseHttpClientRequester baseRequester = 
@@ -25,12 +24,12 @@ public class HttpClientGetRequester implements HttpClientRequester
         return baseRequester.get();
         }
 
-    public int request(final String url)
+    public String request(final String url)
         {
         return request(url, EMPTY_PARAMS);
         }
     
-    public int request(final URL url)
+    public String request(final URL url)
         {
         return request(url.toExternalForm());
         }

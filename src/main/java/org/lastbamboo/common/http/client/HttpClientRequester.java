@@ -3,7 +3,6 @@ package org.lastbamboo.common.http.client;
 import java.net.URL;
 import java.util.Collection;
 
-import org.apache.commons.httpclient.HttpMethod;
 import org.lastbamboo.common.util.Pair;
 
 /**
@@ -17,25 +16,24 @@ public interface HttpClientRequester
      * 
      * @param baseUrl The base URL to send the request to.
      * @param parameters The request parameters.
-     * @return The HTTP method instance, including the status code and access 
-     * to the response body.
+     * @return The response body.
      */
-    int request(String baseUrl, 
+    String request(String baseUrl, 
         Collection<Pair<String,String>> parameters);
 
     /**
      * Issue a request with no parameters.
      * 
      * @param url The URL to issue the request to.
-     * @return The HTTP method instance.
+     * @return The response body.
      */
-    int request(String url);
+    String request(String url);
 
     /**
      * Issue a request with no parameters.
      * 
      * @param url The URL to issue the request to.
-     * @return The HTTP method instance.
+     * @return The response body.
      */
-    int request(URL url);
+    String request(URL url);
     }
