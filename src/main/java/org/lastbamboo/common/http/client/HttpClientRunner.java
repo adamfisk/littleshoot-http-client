@@ -263,7 +263,7 @@ public final class HttpClientRunner implements Runnable
         }
     
     /**
-     * The methed called when an 200-level response is received when making 
+     * The methed called when a 200-level response is received when making 
      * the HTTP request.
      *
      * @throws IOException If an I/O error occurs.
