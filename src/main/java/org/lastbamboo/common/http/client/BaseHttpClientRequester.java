@@ -39,19 +39,19 @@ public class BaseHttpClientRequester
         }
     
 
-    public String post()
+    public String post() throws IOException
         {
         final PostMethod method = new PostMethod(this.m_url);
         return request(method);
         }
     
-    public String get()
+    public String get() throws IOException
         {
         final GetMethod method = new GetMethod(this.m_url);
         return request(method);
         }
 
-    private String request(final HttpMethod method)
+    private String request(final HttpMethod method) throws IOException
         {
         try
             {
@@ -76,18 +76,6 @@ public class BaseHttpClientRequester
                 }
             
             return body;
-            }
-        catch (final HttpException e)
-            {
-            LOG.warn("HTTP error writing request: "+this.m_url, e);
-            throw new RuntimeHttpException(
-                "HTTP error writing request: "+this.m_url, e);
-            }
-        catch (final IOException e)
-            {
-            LOG.warn("IOException writing request: "+this.m_url, e);
-            throw new RuntimeIoException(
-                "IOException writing request: "+this.m_url, e);
             }
         finally
             {

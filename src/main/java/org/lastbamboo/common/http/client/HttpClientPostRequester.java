@@ -1,11 +1,11 @@
 package org.lastbamboo.common.http.client;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import org.apache.commons.httpclient.HttpMethod;
 import org.lastbamboo.common.util.Pair;
 
 /**
@@ -18,19 +18,19 @@ public class HttpClientPostRequester implements HttpClientRequester
         Collections.unmodifiableList(new LinkedList<Pair<String,String>>());
 
     public String request(final String address,
-        final Collection<Pair<String, String>> parameters)
+        final Collection<Pair<String, String>> parameters) throws IOException
         {
         final BaseHttpClientRequester baseRequester = 
             new BaseHttpClientRequester(address, parameters);
         return baseRequester.post();
         }
 
-    public String request(final String url)
+    public String request(final String url) throws IOException
         {
         return request(url, EMPTY_PARAMS);
         }
 
-    public String request(final URL url)
+    public String request(final URL url) throws IOException
         {
         return request(url.toExternalForm());
         }
