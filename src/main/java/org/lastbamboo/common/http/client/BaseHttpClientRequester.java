@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
@@ -58,7 +59,9 @@ public class BaseHttpClientRequester
             final int statusCode = method.getStatusCode();
             final StatusLine statusLine = method.getStatusLine();
             final InputStream is;
-            if (method.getResponseHeader("Content-Encoding").equals("gzip"))
+            final Header encoding = 
+                method.getResponseHeader("Content-Encoding");
+            if (encoding != null && encoding.getValue().equals("gzip"))
                 {
                 is = new GZIPInputStream(method.getResponseBodyAsStream());
                 }
