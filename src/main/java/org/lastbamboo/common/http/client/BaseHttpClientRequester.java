@@ -3,9 +3,9 @@ package org.lastbamboo.common.http.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.StatusLine;
@@ -13,7 +13,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.IOUtils;
 import org.lastbamboo.common.util.Pair;
-import org.lastbamboo.common.util.RuntimeIoException;
 import org.lastbamboo.common.util.UriUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,21 +57,25 @@ public class BaseHttpClientRequester
             this.m_httpClient.executeMethod(method);
             final int statusCode = method.getStatusCode();
             final StatusLine statusLine = method.getStatusLine();
-            final InputStream is = method.getResponseBodyAsStream();
+            final InputStream is;
+            if (method.getResponseHeader("Content-Encoding").equals("gzip"))
+                {
+                is = new GZIPInputStream(method.getResponseBodyAsStream());
+                }
+            else
+                {
+                is = method.getResponseBodyAsStream();
+                }
             final String body = IOUtils.toString(is);
             
             if (statusCode != HttpStatus.SC_OK)
                 {
-                // Note this still reads the whole response body.
                 LOG.warn("ERROR ISSUING REQUEST: " + this.m_url + "\n" +
                     statusLine + "\n" + body);
                 }
             else
                 {
                 LOG.debug("Successfully wrote request...");
-                
-                // We always have to read the body.
-                //IOUtils.copy(is, new NullOutputStream());
                 }
             
             return body;
