@@ -13,6 +13,7 @@ import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.lastbamboo.common.util.Pair;
 import org.lastbamboo.common.util.UriUtils;
 import org.slf4j.Logger;
@@ -37,7 +38,6 @@ public class BaseHttpClientRequester
         this.m_url = sb.toString ();
         LOG.debug("Using URL string: "+this.m_url);
         }
-    
 
     public String post() throws IOException
         {
@@ -63,6 +63,7 @@ public class BaseHttpClientRequester
                 method.getResponseHeader("Content-Encoding");
             if (encoding != null && encoding.getValue().equals("gzip"))
                 {
+                LOG.debug("Unzipping body...");
                 is = new GZIPInputStream(method.getResponseBodyAsStream());
                 }
             else
@@ -70,6 +71,11 @@ public class BaseHttpClientRequester
                 is = method.getResponseBodyAsStream();
                 }
             final String body = IOUtils.toString(is);
+            if (StringUtils.isBlank(body))
+                {
+                // Could easily be a post request, which would not have a body.
+                LOG.debug("No response body.  Post request?");
+                }
             
             if (statusCode != HttpStatus.SC_OK)
                 {
