@@ -53,12 +53,12 @@ public class BaseHttpClientRequester
 
     private String request(final HttpMethod method) throws IOException
         {
+        InputStream is = null;
         try
             {
             this.m_httpClient.executeMethod(method);
             final int statusCode = method.getStatusCode();
             final StatusLine statusLine = method.getStatusLine();
-            final InputStream is;
             final Header encoding = 
                 method.getResponseHeader("Content-Encoding");
             if (encoding != null && encoding.getValue().equals("gzip"))
@@ -91,6 +91,7 @@ public class BaseHttpClientRequester
             }
         finally
             {
+            IOUtils.closeQuietly(is);
             method.releaseConnection();
             }
         
