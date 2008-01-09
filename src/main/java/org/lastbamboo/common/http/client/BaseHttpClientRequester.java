@@ -48,6 +48,7 @@ public class BaseHttpClientRequester
     public String get() throws IOException
         {
         final GetMethod method = new GetMethod(this.m_url);
+        method.setRequestHeader("Accept-Encoding", "gzip");
         return request(method);
         }
 
