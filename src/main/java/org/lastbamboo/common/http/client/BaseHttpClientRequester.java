@@ -48,12 +48,12 @@ public class BaseHttpClientRequester
     public String get() throws IOException
         {
         final GetMethod method = new GetMethod(this.m_url);
-        method.setRequestHeader("Accept-Encoding", "gzip");
         return request(method);
         }
 
     private String request(final HttpMethod method) throws IOException
         {
+        method.setRequestHeader("Accept-Encoding", "gzip");
         InputStream is = null;
         try
             {
@@ -80,12 +80,14 @@ public class BaseHttpClientRequester
             
             if (statusCode != HttpStatus.SC_OK)
                 {
-                LOG.warn("ERROR ISSUING REQUEST: " + this.m_url + "\n" +
-                    statusLine + "\n" + body);
+                final String msg = "NO 200 OK: " + this.m_url + "\n" +
+                    statusLine + "\n" + body;
+                LOG.warn(msg);
+                throw new IOException(msg);
                 }
             else
                 {
-                LOG.debug("Successfully wrote request...");
+                LOG.debug("Got 200 response...");
                 }
             
             return body;
