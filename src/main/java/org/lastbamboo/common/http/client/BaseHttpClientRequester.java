@@ -32,10 +32,7 @@ public class BaseHttpClientRequester
     public BaseHttpClientRequester(final String baseAddress, 
         final Collection<Pair<String, String>> parameters)
         {
-        final StringBuilder sb = new StringBuilder ();
-        sb.append (baseAddress);
-        sb.append (UriUtils.getUrlParameters (parameters));
-        this.m_url = sb.toString ();
+        this.m_url = UriUtils.newUrl(baseAddress, parameters);
         LOG.debug("Using URL string: "+this.m_url);
         }
 
