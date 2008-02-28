@@ -19,9 +19,11 @@ public interface HttpClientRequester
      * @param parameters The request parameters.
      * @return The response body.
      * @throws IOException If an IO error occurs.
+     * @throws ServiceUnavailableException If the service is unavailable. 
      */
     String request(String baseUrl, 
-        Collection<Pair<String,String>> parameters) throws IOException;
+        Collection<Pair<String,String>> parameters) throws IOException, 
+        ServiceUnavailableException;
 
     /**
      * Issue a request with no parameters.
@@ -29,8 +31,9 @@ public interface HttpClientRequester
      * @param url The URL to issue the request to.
      * @return The response body.
      * @throws IOException If an IO error occurs.
+     * @throws ServiceUnavailableException If the service is unavailable.
      */
-    String request(String url) throws IOException;
+    String request(String url) throws IOException, ServiceUnavailableException;
 
     /**
      * Issue a request with no parameters.
@@ -38,6 +41,7 @@ public interface HttpClientRequester
      * @param url The URL to issue the request to.
      * @return The response body.
      * @throws IOException If any IO error occurs.
+     * @throws ServiceUnavailableException If the service is unavailable.
      */
-    String request(URL url) throws IOException;
+    String request(URL url) throws IOException, ServiceUnavailableException;
     }

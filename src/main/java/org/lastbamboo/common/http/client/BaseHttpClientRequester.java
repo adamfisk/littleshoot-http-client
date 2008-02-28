@@ -36,19 +36,20 @@ public class BaseHttpClientRequester
         LOG.debug("Using URL string: "+this.m_url);
         }
 
-    public String post() throws IOException
+    public String post() throws IOException, ServiceUnavailableException
         {
         final PostMethod method = new PostMethod(this.m_url);
         return request(method);
         }
     
-    public String get() throws IOException
+    public String get() throws IOException, ServiceUnavailableException
         {
         final GetMethod method = new GetMethod(this.m_url);
         return request(method);
         }
 
-    private String request(final HttpMethod method) throws IOException
+    private String request(final HttpMethod method) throws IOException, 
+        ServiceUnavailableException
         {
         method.setRequestHeader("Accept-Encoding", "gzip");
         InputStream is = null;
@@ -75,6 +76,14 @@ public class BaseHttpClientRequester
                 LOG.debug("No response body.  Post request?");
                 }
             
+            if (statusCode == HttpStatus.SC_SERVICE_UNAVAILABLE)
+                {
+                final String msg = "Got 503 Service Unavailable " + 
+                    this.m_url + "\n" +
+                    statusLine + "\n" + body;
+                LOG.warn(msg);
+                throw new ServiceUnavailableException(msg);
+                }
             if (statusCode != HttpStatus.SC_OK)
                 {
                 final String msg = "NO 200 OK: " + this.m_url + "\n" +
