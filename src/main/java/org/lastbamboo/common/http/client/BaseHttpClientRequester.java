@@ -26,7 +26,8 @@ public class BaseHttpClientRequester
     {
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
-    private final HttpClient m_httpClient = new HttpClient();
+    private final HttpClientManager m_clientManager = 
+        new HttpClientManagerImpl();
     private final String m_url;
     
     public BaseHttpClientRequester(final String baseAddress, 
@@ -55,7 +56,7 @@ public class BaseHttpClientRequester
         InputStream is = null;
         try
             {
-            this.m_httpClient.executeMethod(method);
+            this.m_clientManager.executeMethod(method);
             final int statusCode = method.getStatusCode();
             final StatusLine statusLine = method.getStatusLine();
             final Header encoding = 

@@ -17,28 +17,7 @@ public final class CommonsHttpClientImpl implements CommonsHttpClient
     /**
      * The underlying Apache Commons client to which we delegate.
      */
-    private final HttpClient m_commonsClient;
-    
-    /**
-     * Constructs a new Apache Commons HTTP client.
-     * 
-     * @param commonsClient
-     *      The underlying Apache Commons client to which to delegate.
-     */
-    public CommonsHttpClientImpl
-            (final HttpClient commonsClient)
-        {
-        m_commonsClient = commonsClient;
-        }
-             
-    /**
-     * Constructs a new Apache Commons HTTP client.
-     */
-    public CommonsHttpClientImpl
-            ()
-        {
-        this(new HttpClient());
-        }
+    private final HttpClientManager m_commonsClient;
     
     /**
      * Constructs a new Apache Commons HTTP client.
@@ -47,17 +26,26 @@ public final class CommonsHttpClientImpl implements CommonsHttpClient
      *      The Commons connection manager used to manage connections used by
      *      the underlying Commons HTTP client.
      */
-    public CommonsHttpClientImpl
-            (final HttpConnectionManager connectionManager)
+    public CommonsHttpClientImpl(final HttpConnectionManager connectionManager)
         {
-        this(new HttpClient(connectionManager));
+        this(new HttpClientManagerImpl(connectionManager));
+        }
+    
+    /**
+     * Constructs a new Apache Commons HTTP client.
+     * 
+     * @param commonsClient The underlying Apache Commons client to which to 
+     * delegate.
+     */
+    private CommonsHttpClientImpl(final HttpClientManager commonsClient)
+        {
+        m_commonsClient = commonsClient;
         }
 
     /**
      * {@inheritDoc}
      */
-    public int executeMethod
-            (final HttpMethod method)
+    public int executeMethod(final HttpMethod method)
         {
         try
             {
@@ -76,8 +64,7 @@ public final class CommonsHttpClientImpl implements CommonsHttpClient
     /**
      * {@inheritDoc}
      */
-    public HttpClientParams getParams
-            ()
+    public HttpClientParams getParams ()
         {
         return m_commonsClient.getParams();
         }
