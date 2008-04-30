@@ -2,11 +2,12 @@ package org.lastbamboo.common.http.client;
 
 import java.io.IOException;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
+import org.lastbamboo.common.util.DefaultHttpClient;
+import org.lastbamboo.common.util.DefaultHttpClientImpl;
 import org.lastbamboo.common.util.RuntimeIoException;
 
 /**
@@ -17,7 +18,7 @@ public final class CommonsHttpClientImpl implements CommonsHttpClient
     /**
      * The underlying Apache Commons client to which we delegate.
      */
-    private final HttpClientManager m_commonsClient;
+    private final DefaultHttpClient m_commonsClient;
     
     /**
      * Constructs a new Apache Commons HTTP client.
@@ -26,22 +27,11 @@ public final class CommonsHttpClientImpl implements CommonsHttpClient
      *      The Commons connection manager used to manage connections used by
      *      the underlying Commons HTTP client.
      */
-    public CommonsHttpClientImpl(final HttpConnectionManager connectionManager)
+    public CommonsHttpClientImpl()
         {
-        this(new HttpClientManagerImpl(connectionManager));
+        m_commonsClient = new DefaultHttpClientImpl();
         }
     
-    /**
-     * Constructs a new Apache Commons HTTP client.
-     * 
-     * @param commonsClient The underlying Apache Commons client to which to 
-     * delegate.
-     */
-    private CommonsHttpClientImpl(final HttpClientManager commonsClient)
-        {
-        m_commonsClient = commonsClient;
-        }
-
     /**
      * {@inheritDoc}
      */

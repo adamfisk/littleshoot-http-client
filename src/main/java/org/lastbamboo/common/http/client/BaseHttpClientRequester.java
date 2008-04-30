@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.StatusLine;
@@ -14,6 +13,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.lastbamboo.common.util.DefaultHttpClient;
+import org.lastbamboo.common.util.DefaultHttpClientImpl;
 import org.lastbamboo.common.util.Pair;
 import org.lastbamboo.common.util.UriUtils;
 import org.slf4j.Logger;
@@ -26,8 +27,8 @@ public class BaseHttpClientRequester
     {
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
-    private final HttpClientManager m_clientManager = 
-        new HttpClientManagerImpl();
+    private final DefaultHttpClient m_clientManager = 
+        new DefaultHttpClientImpl();
     private final String m_url;
     
     public BaseHttpClientRequester(final String baseAddress, 
