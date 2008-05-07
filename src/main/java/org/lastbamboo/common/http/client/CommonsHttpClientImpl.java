@@ -22,14 +22,21 @@ public final class CommonsHttpClientImpl implements CommonsHttpClient
     
     /**
      * Constructs a new Apache Commons HTTP client.
-     * 
-     * @param connectionManager
-     *      The Commons connection manager used to manage connections used by
-     *      the underlying Commons HTTP client.
      */
     public CommonsHttpClientImpl()
         {
         m_commonsClient = new DefaultHttpClientImpl();
+        }
+  
+    /**
+     * Constructs a new Apache Commons HTTP client.
+     * 
+     * @param connectionManager The Commons connection manager used to manage 
+     * connections used by the underlying Commons HTTP client.
+     */
+    public CommonsHttpClientImpl(final HttpConnectionManager connectionManager)
+        {
+        m_commonsClient = new DefaultHttpClientImpl(connectionManager);
         }
     
     /**
@@ -62,8 +69,7 @@ public final class CommonsHttpClientImpl implements CommonsHttpClient
     /**
      * {@inheritDoc}
      */
-    public HttpConnectionManager getHttpConnectionManager
-            ()
+    public HttpConnectionManager getHttpConnectionManager ()
         {
         return m_commonsClient.getHttpConnectionManager();
         }
