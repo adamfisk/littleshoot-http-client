@@ -74,10 +74,18 @@ public final class HttpClientRunner implements Runnable
         catch (final RuntimeIoException e)
             {
             LOG.debug("Could not connect to host or connection lost?", e);
+            this.m_listener.onFailure();
             }
         catch (final Throwable t)
             {
             LOG.error("Unexpected exception", t);
+            this.m_listener.onFailure();
+            }
+        finally
+            {
+            // Release the connection back to the pool.
+            m_httpMethod.releaseConnection();
+            LOG.trace("Released connection...");
             }
         }
 
@@ -87,9 +95,10 @@ public final class HttpClientRunner implements Runnable
     private void handleDownload()
         {
         this.m_listener.onStatusEvent("Connecting...");
+        this.m_listener.onDownloadStarted ();
         try
             {
-            download();
+            executeHttpRequest ();
             }
         catch (final HttpException e)
             {
@@ -115,38 +124,6 @@ public final class HttpClientRunner implements Runnable
                 this.m_httpMethod.getPath(), e);
             this.m_listener.onStatusEvent("User Offline");
             this.m_listener.onCouldNotConnect();
-            }
-        }
-
-    /**
-     * Downloads the specified <code>URI</code> resource from the peer
-     * with the given user ID.
-     *
-     * @throws IOException If an I/O (transport) error occurs. Some transport
-     *  exceptions can be recovered from.
-     * @throws HttpException If a protocol exception occurs. Usually protocol
-     *  exceptions cannot be recovered from.
-     */
-    private void download () throws HttpException, IOException
-        {
-        LOG.trace ("Sending download request to user...");
-
-        m_listener.onDownloadStarted ();
-        try
-            {
-            executeHttpRequest ();
-            LOG.trace ("Finished executing HTTP request...");
-            }
-        catch (final RuntimeException e)
-            {
-            LOG.debug("Caught exception on request", e);
-            throw e;
-            }
-        finally
-            {
-            // Release the connection if no other methods need it.
-            m_httpMethod.releaseConnection();
-            LOG.trace("Released connection...");
             }
         }
 
@@ -198,11 +175,11 @@ public final class HttpClientRunner implements Runnable
             // read the body here.
             IOUtils.copy(inputStream, new NullOutputStream());
             LOG.warn("Did not receive 200 OK response for request to URI: " +
-                this.m_httpMethod.getURI() + "\nInstead received: "+
-                this.m_httpMethod.getStatusLine()+
+                this.m_httpMethod.getURI() + "\n"+
                 "\nRequest headers:\n"+
                 headerString(this.m_httpMethod.getRequestHeaders())+
-                "\nResponse headers:\n"+
+                "\nResponse:\n" +
+                this.m_httpMethod.getStatusLine() + "\n" +
                 headerString(this.m_httpMethod.getResponseHeaders()));
             }
         catch (final URIException e)
@@ -212,9 +189,9 @@ public final class HttpClientRunner implements Runnable
         finally
             {
             IOUtils.closeQuietly(inputStream);
+            m_listener.onNoTwoHundredOk (m_httpMethod.getStatusCode ());
             }
 
-        m_listener.onNoTwoHundredOk (m_httpMethod.getStatusCode ());
         }
 
     private static String headerString(final Header[] headers)

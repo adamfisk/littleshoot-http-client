@@ -62,4 +62,6 @@ public interface HttpListener extends WriteListener
     void onBadHeader(final String header);
 
     void onContentRange(final LongRange range);
+
+    void onFailure();
     }
