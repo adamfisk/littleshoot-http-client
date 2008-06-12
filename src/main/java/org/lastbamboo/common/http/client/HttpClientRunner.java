@@ -13,10 +13,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.LongRange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.lastbamboo.common.util.InputStreamHandler;
 import org.lastbamboo.common.util.RuntimeIoException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Performs an HTTP download using HttpClient.
@@ -27,7 +27,8 @@ public final class HttpClientRunner implements Runnable
     /**
      * Logger for this class.
      */
-    private static final Log LOG = LogFactory.getLog(HttpClientRunner.class);
+    private final Logger m_log = 
+        LoggerFactory.getLogger(HttpClientRunner.class);
 
     private final InputStreamHandler m_inputStreamHandler;
 
@@ -73,19 +74,19 @@ public final class HttpClientRunner implements Runnable
             }
         catch (final RuntimeIoException e)
             {
-            LOG.debug("Could not connect to host or connection lost?", e);
+            m_log.debug("Could not connect to host or connection lost?", e);
             this.m_listener.onFailure();
             }
         catch (final Throwable t)
             {
-            LOG.error("Unexpected exception", t);
+            m_log.error("Unexpected exception", t);
             this.m_listener.onFailure();
             }
         finally
             {
             // Release the connection back to the pool.
             m_httpMethod.releaseConnection();
-            LOG.trace("Released connection...");
+            m_log.trace("Released connection...");
             }
         }
 
@@ -102,7 +103,7 @@ public final class HttpClientRunner implements Runnable
             }
         catch (final HttpException e)
             {
-            LOG.warn("HTTP exception downloading, method: " + 
+            m_log.warn("HTTP exception downloading, method: " + 
                 this.m_httpMethod.getPath() + " " + e.getReason(), e);
             final int reasonCode = e.getReasonCode();
             final String status;
@@ -120,7 +121,7 @@ public final class HttpClientRunner implements Runnable
             }
         catch (final IOException e)
             {
-            LOG.warn("Could not connect to user -- method: " + 
+            m_log.warn("Could not connect to user -- method: " + 
                 this.m_httpMethod.getPath(), e);
             this.m_listener.onStatusEvent("User Offline");
             this.m_listener.onCouldNotConnect();
@@ -134,14 +135,14 @@ public final class HttpClientRunner implements Runnable
      */
     private void executeHttpRequest () throws IOException
         {
-        LOG.trace ("Sending HTTP GET request for: " + 
+        m_log.trace ("Sending HTTP GET request for: " + 
             this.m_httpMethod.getQueryString());
         
         final long start = System.currentTimeMillis();
         m_httpClient.executeMethod (m_httpMethod);
         final long connected = System.currentTimeMillis();
 
-        LOG.trace ("Received status code: " + m_httpMethod.getStatusCode ());
+        m_log.trace ("Received status code: " + m_httpMethod.getStatusCode ());
 
         // Notify the listener that we've connected to the user.
         this.m_listener.onConnect(connected-start);
@@ -174,7 +175,7 @@ public final class HttpClientRunner implements Runnable
             // Just send it into the ether.  We just need to make sure we still 
             // read the body here.
             IOUtils.copy(inputStream, new NullOutputStream());
-            LOG.warn("Did not receive 200 OK response for request to URI: " +
+            m_log.warn("Did not receive 200 OK response for request to URI: " +
                 this.m_httpMethod.getURI() + "\n"+
                 "\nRequest headers:\n"+
                 headerString(this.m_httpMethod.getRequestHeaders())+
@@ -184,7 +185,7 @@ public final class HttpClientRunner implements Runnable
             }
         catch (final URIException e)
             {
-            LOG.error("Could not resolve URI", e);
+            m_log.error("Could not resolve URI", e);
             }
         finally
             {
@@ -212,7 +213,7 @@ public final class HttpClientRunner implements Runnable
         final Header rangeHeader = 
             this.m_httpMethod.getResponseHeader ("Content-Range");
 
-        LOG.debug("Received range header: "+rangeHeader);
+        m_log.debug("Received range header: "+rangeHeader);
         if (rangeHeader == null)
             {
             throw new IOException("Received Partial Content response with " +
@@ -247,7 +248,7 @@ public final class HttpClientRunner implements Runnable
      */
     private void onTwoHundredResponse () throws IOException
         {
-        LOG.trace("Received "+this.m_httpMethod.getStatusCode() + 
+        m_log.trace("Received "+this.m_httpMethod.getStatusCode() + 
             " for request: " +  this.m_httpMethod.getPath());
         
         final Header length = m_httpMethod.getResponseHeader ("Content-Length");
@@ -268,19 +269,20 @@ public final class HttpClientRunner implements Runnable
         // management.
         final InputStream inputStream = m_httpMethod.getResponseBodyAsStream ();
 
+        m_log.debug("Got input stream...sending to: {}", m_inputStreamHandler);
         if (contentEncoding == null)
             {
             m_inputStreamHandler.handleInputStream (inputStream);
             }
         else if (StringUtils.contains (contentEncoding.getValue (), "gzip"))
             {
-            LOG.trace("Handling gzipped message body...");
+            m_log.trace("Handling gzipped message body...");
             m_inputStreamHandler.handleInputStream(
                 new GZIPInputStream (inputStream));
             }
         else
             {
-            LOG.warn("Unrecognized content encoding: "+contentEncoding);
+            m_log.warn("Unrecognized content encoding: "+contentEncoding);
             }
 
         m_listener.onMessageBodyRead ();
