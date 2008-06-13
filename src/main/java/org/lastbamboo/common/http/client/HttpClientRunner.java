@@ -2,6 +2,7 @@ package org.lastbamboo.common.http.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.httpclient.Header;
@@ -119,12 +120,27 @@ public final class HttpClientRunner implements Runnable
             this.m_listener.onStatusEvent(status);
             this.m_listener.onHttpException(e);
             }
+        catch (final SocketTimeoutException e)
+            {
+            warn("Socket timeout: ", e);
+            this.m_listener.onFailure();
+            }
         catch (final IOException e)
             {
-            m_log.warn("Could not connect to user -- method: " + 
-                this.m_httpMethod.getPath(), e);
+            warn("Connection error?", e);
             this.m_listener.onStatusEvent("User Offline");
             this.m_listener.onCouldNotConnect();
+            }
+        }
+
+    private void warn(final String msg, Throwable t)
+        {
+        try
+            {
+            m_log.warn(msg + this.m_httpMethod.getURI(), t);
+            }
+        catch (final URIException e)
+            {
             }
         }
 
