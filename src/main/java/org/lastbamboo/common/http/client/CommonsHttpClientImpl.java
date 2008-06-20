@@ -9,12 +9,17 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 import org.lastbamboo.common.util.DefaultHttpClient;
 import org.lastbamboo.common.util.DefaultHttpClientImpl;
 import org.lastbamboo.common.util.RuntimeIoException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the Apache Commons HTTP client interface.
  */
 public final class CommonsHttpClientImpl implements CommonsHttpClient
     {
+    
+    private final Logger m_log = LoggerFactory.getLogger(getClass());
+    
     /**
      * The underlying Apache Commons client to which we delegate.
      */
@@ -50,11 +55,13 @@ public final class CommonsHttpClientImpl implements CommonsHttpClient
             }
         catch(final HttpException e)
             {
-            throw new RuntimeHttpException(e);
+            m_log.debug("HttpException executing method", e);
+            throw new RuntimeHttpException("Exception executing method", e);
             }
         catch(final IOException e)
             {
-            throw new RuntimeIoException(e);
+            m_log.debug("IOException executing method", e);
+            throw new RuntimeIoException("Exception executing method", e);
             }
         }
 
