@@ -239,6 +239,7 @@ public final class HttpClientRunner implements Runnable
         m_log.debug("Received range header: "+rangeHeader);
         if (rangeHeader == null)
             {
+            m_log.warn("No range header!!");
             throw new IOException("Received Partial Content response with " +
                 "no Content-Range header");
             }
