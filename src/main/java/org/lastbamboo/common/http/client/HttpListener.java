@@ -1,5 +1,7 @@
 package org.lastbamboo.common.http.client;
 
+import java.io.IOException;
+
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.lang.math.LongRange;
 import org.lastbamboo.common.util.WriteListener;
@@ -61,7 +63,9 @@ public interface HttpListener extends WriteListener
 
     void onBadHeader(final String header);
 
-    void onContentRange(final LongRange range);
+    void onContentRange(final LongRange range) throws IOException;
 
     void onFailure();
+
+    void onPermanentFailure();
     }

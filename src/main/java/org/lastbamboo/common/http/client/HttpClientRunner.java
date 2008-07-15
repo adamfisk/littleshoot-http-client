@@ -134,13 +134,12 @@ public final class HttpClientRunner implements Runnable
             }
         catch (final IOException e)
             {
-            warn("Connection error?", e);
-            this.m_listener.onStatusEvent("User Offline");
-            this.m_listener.onCouldNotConnect();
+            m_log.debug("Connection or copying error", e);
+            this.m_listener.onFailure();
             }
         }
 
-    private void warn(final String msg, Throwable t)
+    private void warn(final String msg, final Throwable t)
         {
         try
             {
@@ -158,7 +157,7 @@ public final class HttpClientRunner implements Runnable
      */
     private void executeHttpRequest () throws IOException
         {
-        m_log.trace ("Sending HTTP GET request for: " + 
+        m_log.trace ("Sending HTTP GET request for: {}", 
             this.m_httpMethod.getQueryString());
         
         final long start = System.currentTimeMillis();
@@ -236,31 +235,15 @@ public final class HttpClientRunner implements Runnable
         final Header rangeHeader = 
             this.m_httpMethod.getResponseHeader ("Content-Range");
 
-        m_log.debug("Received range header: "+rangeHeader);
+        m_log.debug("Received range header: {}", rangeHeader);
         if (rangeHeader == null)
             {
             m_log.warn("No range header!!");
             throw new IOException("Received Partial Content response with " +
                 "no Content-Range header");
             }
-        String rangeString = rangeHeader.getValue().trim();
-        if (!rangeString.startsWith("bytes"))
-            {
-            this.m_listener.onBadHeader(rangeHeader.toString());
-            throw new IOException("Could not read header: "+rangeHeader);
-            }
         
-        rangeString = 
-            StringUtils.substringBetween(rangeString, "bytes", "/").trim();
-        
-        final String minString = 
-            StringUtils.substringBefore(rangeString, "-").trim();
-        final String maxString = 
-            StringUtils.substringAfter(rangeString, "-").trim();
-        final long min = Long.parseLong(minString);
-        final long max = Long.parseLong(maxString);
-        final LongRange range = new LongRange(min, max);
-        m_listener.onContentRange(range);
+        notifyRange(rangeHeader);
         onTwoHundredResponse();
         }
     
@@ -272,15 +255,21 @@ public final class HttpClientRunner implements Runnable
      */
     private void onTwoHundredResponse () throws IOException
         {
-        m_log.trace("Received "+this.m_httpMethod.getStatusCode() + 
-            " for request: " +  this.m_httpMethod.getPath());
+        //m_log.trace("Received "+this.m_httpMethod.getStatusCode() + 
+        //    " for request: " +  this.m_httpMethod.getPath());
         
         final Header length = m_httpMethod.getResponseHeader ("Content-Length");
-
         if (length != null)
             {
             m_listener.onContentLength(
                 Long.parseLong (length.getValue ()));
+            }
+        
+        final Header rangeHeader = 
+            this.m_httpMethod.getResponseHeader ("Content-Range");
+        if (rangeHeader != null)
+            {
+            notifyRange(rangeHeader);
             }
         
         // Uncompress the data if it's gzipped, otherwise just process it.
@@ -296,19 +285,55 @@ public final class HttpClientRunner implements Runnable
         m_log.debug("Got input stream...sending to: {}", m_inputStreamHandler);
         if (contentEncoding == null)
             {
-            m_inputStreamHandler.handleInputStream (inputStream);
+            handleInputStream(inputStream);
             }
         else if (StringUtils.contains (contentEncoding.getValue (), "gzip"))
             {
             m_log.trace("Handling gzipped message body...");
-            m_inputStreamHandler.handleInputStream(
-                new GZIPInputStream (inputStream));
+            handleInputStream(new GZIPInputStream (inputStream));
             }
         else
             {
-            m_log.warn("Unrecognized content encoding: "+contentEncoding);
+            m_log.warn("Unrecognized content encoding: {}", contentEncoding);
             }
+        }
 
-        m_listener.onMessageBodyRead ();
+    private void handleInputStream(final InputStream inputStream) 
+        throws IOException
+        {
+        try
+            {
+            m_inputStreamHandler.handleInputStream (inputStream);
+            m_listener.onMessageBodyRead ();
+            }
+        catch (final NoContentRangeException e)
+            {
+            // This is not recoverable -- it's unlikely the server will
+            // provide a content range the next time around.
+            this.m_listener.onPermanentFailure();
+            }
+        }
+
+    private void notifyRange(final Header rangeHeader) throws IOException
+        {
+        String rangeString = rangeHeader.getValue().trim();
+        if (!rangeString.startsWith("bytes"))
+            {
+            m_log.warn("Bad header!!  {}", rangeHeader);
+            this.m_listener.onBadHeader(rangeHeader.toString());
+            throw new IOException("Could not read header: "+rangeHeader);
+            }
+        
+        rangeString = 
+            StringUtils.substringBetween(rangeString, "bytes", "/").trim();
+        
+        final String minString = 
+            StringUtils.substringBefore(rangeString, "-").trim();
+        final String maxString = 
+            StringUtils.substringAfter(rangeString, "-").trim();
+        final long min = Long.parseLong(minString);
+        final long max = Long.parseLong(maxString);
+        final LongRange range = new LongRange(min, max);
+        m_listener.onContentRange(range);
         }
     }
