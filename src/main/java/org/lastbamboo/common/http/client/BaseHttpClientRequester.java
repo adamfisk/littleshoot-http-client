@@ -1,7 +1,11 @@
 package org.lastbamboo.common.http.client;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.Collection;
 import java.util.zip.GZIPInputStream;
 
@@ -91,6 +95,7 @@ public class BaseHttpClientRequester
                 final String msg = "NO 200 OK: " + this.m_url + "\n" +
                     statusLine + "\n" + body;
                 LOG.warn(msg);
+                writeToFile(body);
                 throw new IOException(msg);
                 }
             else
@@ -106,6 +111,28 @@ public class BaseHttpClientRequester
             method.releaseConnection();
             }
         
+        }
+
+    private void writeToFile(final String body)
+        {
+        final File out = new File(getClass().getSimpleName()+"-Error.html");
+        if (out.exists())
+            {
+            out.delete();
+            }
+        final StringReader is = new StringReader(body);
+        try
+            {
+            IOUtils.copy(is, new FileOutputStream(out));
+            }
+        catch (final FileNotFoundException e)
+            {
+            LOG.debug("FNF", e);
+            }
+        catch (final IOException e)
+            {
+            LOG.debug("IO", e);
+            }
         }
 
     }
