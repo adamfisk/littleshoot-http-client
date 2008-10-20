@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.lastbamboo.common.util.Pair;
 
@@ -19,6 +20,15 @@ public class HttpClientGetRequester implements HttpClientRequester
     
     public String request(final String address,
         final Collection<Pair<String, String>> parameters) throws IOException, 
+        ServiceUnavailableException
+        {
+        final BaseHttpClientRequester baseRequester = 
+            new BaseHttpClientRequester(address, parameters);
+        return baseRequester.get();
+        }
+
+    public String request(final String address,
+        final Map<String, String> parameters) throws IOException, 
         ServiceUnavailableException
         {
         final BaseHttpClientRequester baseRequester = 

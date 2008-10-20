@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.Collection;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.httpclient.Header;
@@ -40,6 +41,12 @@ public class BaseHttpClientRequester
         {
         this.m_url = UriUtils.newUrl(baseAddress, parameters);
         LOG.debug("Using URL string: "+this.m_url);
+        }
+
+    public BaseHttpClientRequester(final String baseAddress,
+        final Map<String, String> parameters)
+        {
+        this.m_url = UriUtils.newUrl(baseAddress, parameters);
         }
 
     public String post() throws IOException, ServiceUnavailableException
