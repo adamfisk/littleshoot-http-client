@@ -17,23 +17,21 @@ public class HttpClientPostRequester implements HttpClientRequester
     
     private static final Collection<Pair<String, String>> EMPTY_PARAMS =
         Collections.unmodifiableList(new LinkedList<Pair<String,String>>());
-
+    private final BaseHttpClientRequester m_baseRequester = 
+        new BaseHttpClientRequester();
+    
     public String request(final String baseUrl,
         final Collection<Pair<String, String>> parameters) throws IOException, 
             ServiceUnavailableException
         {
-        final BaseHttpClientRequester baseRequester = 
-            new BaseHttpClientRequester(baseUrl, parameters);
-        return baseRequester.post();
+        return this.m_baseRequester.post(baseUrl, parameters);
         }
     
     public String request(final String baseUrl,
         final Map<String, String> parameters) throws IOException, 
             ServiceUnavailableException
         {
-        final BaseHttpClientRequester baseRequester = 
-            new BaseHttpClientRequester(baseUrl, parameters);
-        return baseRequester.post();
+        return m_baseRequester.post(baseUrl, parameters);
         }
 
     public String request(final String url) throws IOException, 

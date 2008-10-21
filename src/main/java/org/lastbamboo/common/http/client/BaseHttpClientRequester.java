@@ -34,33 +34,45 @@ public class BaseHttpClientRequester
     private final Logger LOG = LoggerFactory.getLogger(getClass());
     private final DefaultHttpClient m_clientManager = 
         new DefaultHttpClientImpl();
-    private final String m_url;
-    
-    public BaseHttpClientRequester(final String baseAddress, 
-        final Collection<Pair<String, String>> parameters)
-        {
-        this.m_url = UriUtils.newUrl(baseAddress, parameters);
-        LOG.debug("Using URL string: "+this.m_url);
-        }
 
-    public BaseHttpClientRequester(final String baseAddress,
-        final Map<String, String> parameters)
+    public String post(final String baseUrl, 
+        final Collection<Pair<String, String>> parameters) throws IOException, 
+        ServiceUnavailableException
         {
-        this.m_url = UriUtils.newUrl(baseAddress, parameters);
-        }
-
-    public String post() throws IOException, ServiceUnavailableException
-        {
-        final PostMethod method = new PostMethod(this.m_url);
+        final String url = UriUtils.newUrl(baseUrl, parameters);
+        final PostMethod method = new PostMethod(url);
         return request(method);
         }
     
-    public String get() throws IOException, ServiceUnavailableException
+    public String post(final String baseUrl, 
+        final Map<String, String> parameters) throws IOException, 
+        ServiceUnavailableException
         {
-        final GetMethod method = new GetMethod(this.m_url);
+        final String url = UriUtils.newUrl(baseUrl, parameters);
+        final PostMethod method = new PostMethod(url);
+        return request(method);
+        }
+    
+    
+    public String get(final String baseUrl, 
+        final Collection<Pair<String, String>> parameters) 
+        throws IOException, ServiceUnavailableException
+        {
+        final String url = UriUtils.newUrl(baseUrl, parameters);
+        final GetMethod method = new GetMethod(url);
         return request(method);
         }
 
+    
+    public String get(final String baseUrl, 
+        final Map<String, String> parameters) 
+        throws IOException, ServiceUnavailableException
+        {
+        final String url = UriUtils.newUrl(baseUrl, parameters);
+        final GetMethod method = new GetMethod(url);
+        return request(method);
+        }
+    
     private String request(final HttpMethod method) throws IOException, 
         ServiceUnavailableException
         {
@@ -92,14 +104,14 @@ public class BaseHttpClientRequester
             if (statusCode == HttpStatus.SC_SERVICE_UNAVAILABLE)
                 {
                 final String msg = "Got 503 Service Unavailable " + 
-                    this.m_url + "\n" +
+                    method.getURI() + "\n" +
                     statusLine + "\n" + body;
                 LOG.warn(msg);
                 throw new ServiceUnavailableException(msg);
                 }
             if (statusCode != HttpStatus.SC_OK)
                 {
-                final String msg = "NO 200 OK: " + this.m_url + "\n" +
+                final String msg = "NO 200 OK: " + method.getURI() + "\n" +
                     statusLine + "\n" + body;
                 LOG.warn(msg);
                 writeToFile(body);

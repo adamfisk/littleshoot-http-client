@@ -18,22 +18,21 @@ public class HttpClientGetRequester implements HttpClientRequester
     private static final Collection<Pair<String, String>> EMPTY_PARAMS =
         Collections.unmodifiableList(new LinkedList<Pair<String,String>>());
     
+    private final BaseHttpClientRequester m_baseRequester = 
+        new BaseHttpClientRequester();
+    
     public String request(final String address,
         final Collection<Pair<String, String>> parameters) throws IOException, 
         ServiceUnavailableException
         {
-        final BaseHttpClientRequester baseRequester = 
-            new BaseHttpClientRequester(address, parameters);
-        return baseRequester.get();
+        return m_baseRequester.get(address, parameters);
         }
 
     public String request(final String address,
         final Map<String, String> parameters) throws IOException, 
         ServiceUnavailableException
         {
-        final BaseHttpClientRequester baseRequester = 
-            new BaseHttpClientRequester(address, parameters);
-        return baseRequester.get();
+        return m_baseRequester.get(address, parameters);
         }
 
     public String request(final String url) throws IOException, 
