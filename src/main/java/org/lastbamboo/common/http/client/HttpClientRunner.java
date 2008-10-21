@@ -88,6 +88,7 @@ public final class HttpClientRunner implements Runnable
             // Release the connection back to the pool.
             try
                 {
+                m_log.debug("Releasing HTTP connection...");
                 m_httpMethod.releaseConnection();
                 }
             catch (final RuntimeException e)
