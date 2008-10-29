@@ -26,13 +26,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Issues a post request using HTTP client. 
+ * Issues an HTTP request using HTTP client. 
  */
 public class BaseHttpClientRequester
     {
 
     private final Logger LOG = LoggerFactory.getLogger(getClass());
-    private final DefaultHttpClient m_clientManager = 
+    private final DefaultHttpClient m_httpClient = 
         new DefaultHttpClientImpl();
 
     public String post(final String baseUrl, 
@@ -80,7 +80,7 @@ public class BaseHttpClientRequester
         InputStream is = null;
         try
             {
-            this.m_clientManager.executeMethod(method);
+            this.m_httpClient.executeMethod(method);
             final int statusCode = method.getStatusCode();
             final StatusLine statusLine = method.getStatusLine();
             final Header encoding = 
