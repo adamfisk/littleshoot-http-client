@@ -5,7 +5,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
-import org.lastbamboo.common.util.Pair;
+import org.littleshoot.util.Pair;
 
 /**
  * Interface for utility classes for issuing HTTP client requests.

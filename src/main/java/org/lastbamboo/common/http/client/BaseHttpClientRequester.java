@@ -18,10 +18,10 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.lastbamboo.common.util.DefaultHttpClient;
-import org.lastbamboo.common.util.DefaultHttpClientImpl;
-import org.lastbamboo.common.util.Pair;
-import org.lastbamboo.common.util.UriUtils;
+import org.littleshoot.util.DefaultHttpClient;
+import org.littleshoot.util.DefaultHttpClientImpl;
+import org.littleshoot.util.Pair;
+import org.littleshoot.util.UriUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

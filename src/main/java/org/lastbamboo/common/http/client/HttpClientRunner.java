@@ -14,8 +14,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.LongRange;
-import org.lastbamboo.common.util.InputStreamHandler;
-import org.lastbamboo.common.util.RuntimeIoException;
+import org.littleshoot.util.InputStreamHandler;
+import org.littleshoot.util.RuntimeIoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

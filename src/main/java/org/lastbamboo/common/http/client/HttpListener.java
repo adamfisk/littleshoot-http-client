@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.lang.math.LongRange;
-import org.lastbamboo.common.util.WriteListener;
+import org.littleshoot.util.WriteListener;
 
 /**
  * Interface for listening to download events, such as setting of the 

@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.lastbamboo.common.util.Pair;
+import org.littleshoot.util.Pair;
 
 /**
  * Issues a post request using HTTP client. 

@@ -6,9 +6,9 @@ import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
-import org.lastbamboo.common.util.DefaultHttpClient;
-import org.lastbamboo.common.util.DefaultHttpClientImpl;
-import org.lastbamboo.common.util.RuntimeIoException;
+import org.littleshoot.util.DefaultHttpClient;
+import org.littleshoot.util.DefaultHttpClientImpl;
+import org.littleshoot.util.RuntimeIoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
