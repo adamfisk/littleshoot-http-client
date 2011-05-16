@@ -37,24 +37,12 @@
         <url>https://adamfisk@github.com/adamfisk/littleshoot-http-client.git</url>
     </scm>
 
-    <developers>
-        <developer>
-            <id>adamfisk</id>
-            <name>Adam Fisk</name>
-            <email>a@littleshoot.org</email>
-            <organization>LittleShoot</organization>
-            <organizationUrl>http://www.littleshoot.org/</organizationUrl>
-            <roles><role>Developer</role></roles>
-            <timezone>-5</timezone>
-        </developer>
-    </developers>
-
     <dependencies>
 
         <dependency>
             <groupId>org.littleshoot</groupId>
             <artifactId>mina-port</artifactId>
-            <version>1.0</version>
+            <version>${mina.port.version}</version>
         </dependency>
 
         <dependency>
