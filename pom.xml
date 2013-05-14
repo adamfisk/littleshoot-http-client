@@ -3,7 +3,7 @@
     <groupId>org.littleshoot</groupId>
     <artifactId>http-client</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.3</version>
     <name>LittleShoot Wrapper for Apache HTTP Client</name>
     <url>http://www.littleshoot.org</url>
 
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>org.littleshoot</groupId>
             <artifactId>mina-port</artifactId>
-            <version>${ls.version}</version>
+            <version>1.4</version>
         </dependency>
 
         <dependency>
